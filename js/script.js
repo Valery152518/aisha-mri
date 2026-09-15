@@ -1,87 +1,122 @@
-// Validación del formulario de visitas - AISHA MRI
-// Este sitio es estático (GitHub Pages), por lo que el formulario NO hace POST a un servidor.
-// La validación se realiza completamente en el navegador para evitar el error 405 Not Allowed.
+// Validación del formulario de visitas - Actividad 2
 
-document.addEventListener("DOMContentLoaded", () => {
-    const formulario = document.querySelector("#formulario-visita");
-    if (!formulario) return;
+const formulario = document.getElementById("formulario-visita");
 
-    // Desactiva la validación automática del navegador para usar nuestros mensajes.
-    formulario.noValidate = true;
+// Desactiva la validación automática del navegador
+formulario.noValidate = true;
 
-    formulario.addEventListener("submit", (evento) => {
-        // Muy importante: GitHub Pages no procesa formularios POST.
-        evento.preventDefault();
+formulario.addEventListener("submit", function (evento) {
 
-        const errores = [];
+    // Evita que el formulario intente enviarse a un servidor
+    // y evita el error 405 de GitHub Pages.
+    evento.preventDefault();
 
-        const nombre = document.getElementById("nombre").value.trim();
-        const telefono = document.getElementById("telefono").value.trim();
-        const codigoPostal = document.getElementById("codigo-postal").value.trim();
-        const correo = document.getElementById("correo").value.trim();
-        const comentario = document.getElementById("comentario").value.trim();
+    const errores = [];
 
-        if (nombre === "") {
-            errores.push("Nombre completo");
-        }
+    // Obtener los valores de los campos
+    const nombre = document.getElementById("nombre").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const codigoPostal = document.getElementById("codigo-postal").value.trim();
+    const correo = document.getElementById("correo").value.trim();
+    const comentario = document.getElementById("comentario").value.trim();
 
-        if (telefono === "") {
-            errores.push("Teléfono");
-        } else if (!/^\d{10}$/.test(telefono)) {
-            errores.push("Teléfono: debe contener exactamente 10 números");
-        }
 
-        if (codigoPostal === "") {
-            errores.push("Código postal");
-        } else if (!/^\d{5}$/.test(codigoPostal)) {
-            errores.push("Código postal: debe contener exactamente 5 números");
-        }
+    // -----------------------------------
+    // VALIDAR CAMPOS DE TEXTO
+    // -----------------------------------
 
-        if (correo === "") {
-            errores.push("Correo electrónico");
-        } else {
-            const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!formatoCorreo.test(correo)) {
-                errores.push("Correo electrónico: formato no válido");
-            }
-        }
+    if (nombre === "") {
+        errores.push("Nombre completo");
+    }
 
-        if (comentario === "") {
-            errores.push("Comentario");
-        }
+    if (telefono === "") {
+        errores.push("Teléfono");
+    }
 
-        const sexoSeleccionado = document.querySelector('input[name="sexo"]:checked');
-        if (!sexoSeleccionado) {
-            errores.push("Sexo: selecciona una opción");
-        }
+    if (codigoPostal === "") {
+        errores.push("Código postal");
+    }
 
-        const condiciones = document.querySelector('input[name="condiciones"]');
-        if (!condiciones.checked) {
-            errores.push("Aceptación de condiciones");
-        }
+    if (correo === "") {
+        errores.push("Correo electrónico");
+    }
 
-        if (errores.length > 0) {
-            alert(
-                "Por favor, revisa los siguientes campos:\n\n- " +
-                errores.join("\n- ")
-            );
-            return;
-        }
+    if (comentario === "") {
+        errores.push("Comentario");
+    }
+
+
+    // -----------------------------------
+    // VALIDAR TELÉFONO
+    // -----------------------------------
+
+    if (telefono !== "" && !/^\d+$/.test(telefono)) {
+        errores.push("Teléfono: debe contener solo números");
+    }
+
+
+    // -----------------------------------
+    // VALIDAR CÓDIGO POSTAL
+    // -----------------------------------
+
+    if (codigoPostal !== "" && !/^\d+$/.test(codigoPostal)) {
+        errores.push("Código postal: debe contener solo números");
+    }
+
+
+    // -----------------------------------
+    // VALIDAR CORREO ELECTRÓNICO
+    // -----------------------------------
+
+    const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (correo !== "" && !formatoCorreo.test(correo)) {
+        errores.push("Correo electrónico: formato no válido");
+    }
+
+
+    // -----------------------------------
+    // VALIDAR RADIO BUTTON - SEXO
+    // -----------------------------------
+
+    const sexoSeleccionado =
+        document.querySelector('input[name="sexo"]:checked');
+
+    if (!sexoSeleccionado) {
+        errores.push("Sexo: selecciona una opción");
+    }
+
+
+    // -----------------------------------
+    // VALIDAR CHECKBOX - CONDICIONES
+    // -----------------------------------
+
+    const condiciones =
+        document.querySelector('input[name="condiciones"]');
+
+    if (!condiciones.checked) {
+        errores.push("Aceptación de condiciones");
+    }
+
+
+    // -----------------------------------
+    // MOSTRAR RESULTADO
+    // -----------------------------------
+
+    if (errores.length > 0) {
+
+        alert(
+            "Por favor, revisa los siguientes campos:\n\n- " +
+            errores.join("\n- ")
+        );
+
+    } else {
 
         alert(
             "¡Formulario validado correctamente!\n\n" +
-            "Tus datos fueron revisados en este navegador.\n" +
-            "Este proyecto académico no envía información a un servidor."
+            "Todos los campos fueron llenados de forma adecuada."
         );
 
-        formulario.reset();
-    });
+    }
 
-    // Solo permite números en teléfono y código postal.
-    ["telefono", "codigo-postal"].forEach((id) => {
-        const campo = document.getElementById(id);
-        campo.addEventListener("input", () => {
-            campo.value = campo.value.replace(/\D/g, "");
-        });
-    });
 });
